@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+struct FGameplayTag;
 
 UCLASS()
 class CRASHCOURSE_API ACC_PlayerController : public APlayerController
@@ -39,4 +40,5 @@ private:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Primary();
+	void ActivateAbility(const FGameplayTag& AbilityTag) const;
 };
