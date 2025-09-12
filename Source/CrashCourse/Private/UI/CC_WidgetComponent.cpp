@@ -5,7 +5,9 @@
 
 #include "AbilitySystem/CC_AbilitySystemComponent.h"
 #include "AbilitySystem/CC_AttributeSet.h"
+#include "Blueprint/WidgetTree.h"
 #include "Characters/CC_BaseCharacter.h"
+#include "UI/CC_AttributeWidget.h"
 
 
 void UCC_WidgetComponent::BeginPlay()
@@ -58,6 +60,27 @@ void UCC_WidgetComponent::OnASCInitialized(UAbilitySystemComponent* ASC, UAttrib
 
 void UCC_WidgetComponent::BindToAttributeChanges()
 {
-	// TODO: Listen for changes to Gameplay Attributes and update our widgets accordingly.
+	for (const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair : AttributeMap)
+	{
+		BindWidgetToAttributeChanges(GetUserWidgetObject(), Pair); // for checking the owned widget object.
+		
+		GetUserWidgetObject()->WidgetTree->ForEachWidget([this, &Pair](UWidget* ChildWidget)
+		{
+			BindWidgetToAttributeChanges(ChildWidget, Pair);
+		});
+	}
 }
 
+void UCC_WidgetComponent::BindWidgetToAttributeChanges(UWidget* WidgetObject, const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair) const
+{
+	UCC_AttributeWidget* AttributeWidget = Cast<UCC_AttributeWidget>(WidgetObject);
+	if (!IsValid(AttributeWidget)) return; // We only care about CC Attribute Widgets
+	if (!AttributeWidget->MatchesAttributes(Pair)) return; // Only subscribe for matching Attributes
+
+	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get()); // for initial values.
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Key).AddLambda([this, AttributeWidget, &Pair](const FOnAttributeChangeData& AttributeChangeData)
+	{
+		AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get()); // For changes during the game.
+	});
+}
