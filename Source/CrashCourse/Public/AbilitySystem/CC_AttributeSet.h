@@ -15,7 +15,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttributesInitialized);
-
+ 
 UCLASS()
 class CRASHCOURSE_API UCC_AttributeSet : public UAttributeSet
 {

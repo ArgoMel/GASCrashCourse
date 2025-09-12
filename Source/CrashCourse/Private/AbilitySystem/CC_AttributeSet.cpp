@@ -31,9 +31,8 @@ void UCC_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 
 void UCC_AttributeSet::OnRep_AttributesInitialized()
 {
-	if (!bAttributesInitialized)
+	if (bAttributesInitialized)
 	{
-		bAttributesInitialized = true;
 		OnAttributesInitialized.Broadcast();
 	}
 }
