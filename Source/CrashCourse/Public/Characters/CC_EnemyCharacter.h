@@ -7,6 +7,7 @@
 #include "CC_EnemyCharacter.generated.h"
 
 class UAbilitySystemComponent;
+class UAttributeSet;
 
 UCLASS()
 class CRASHCOURSE_API ACC_EnemyCharacter : public ACC_BaseCharacter
@@ -24,4 +25,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
 };
