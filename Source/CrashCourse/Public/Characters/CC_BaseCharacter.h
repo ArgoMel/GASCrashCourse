@@ -55,4 +55,5 @@ private:
 	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Replicated)
-	bool bAlive = true;};
+	bool bAlive = true;
+};
