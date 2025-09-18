@@ -27,7 +27,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|AI")
 	float MaxAttackDelay{.5f};
-	
+
+	UFUNCTION(BlueprintImplementableEvent)
+	float GetTimelineLength();
 protected:
 	virtual void BeginPlay() override;
 	virtual void HandleDeath() override;
@@ -38,4 +40,5 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+	
 };

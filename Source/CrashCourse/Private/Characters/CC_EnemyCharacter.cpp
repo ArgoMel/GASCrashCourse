@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "AbilitySystem/CC_AbilitySystemComponent.h"
 #include "AbilitySystem/CC_AttributeSet.h"
+#include "Components/TimelineComponent.h"
 
 
 ACC_EnemyCharacter::ACC_EnemyCharacter()
