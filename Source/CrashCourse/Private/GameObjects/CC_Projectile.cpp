@@ -8,6 +8,7 @@
 #include "Characters/CC_PlayerCharacter.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameplayTags/CCTags.h"
+#include "Utils/CC_BlueprintLibrary.h"
 
 ACC_Projectile::ACC_Projectile()
 {
@@ -28,12 +29,11 @@ void ACC_Projectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	UAbilitySystemComponent* AbilitySystemComponent = PlayerCharacter->GetAbilitySystemComponent();
 	if (!IsValid(AbilitySystemComponent) || !HasAuthority()) return;
 
-	FGameplayEffectContextHandle ContextHandle =  AbilitySystemComponent->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+	FGameplayEventData Payload;
+	Payload.Instigator = GetOwner();
+	Payload.Target = PlayerCharacter;
 
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, CCTags::SetByCaller::Projectile, Damage);
-
-	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	UCC_BlueprintLibrary::SendDamageEventToPlayer(PlayerCharacter, DamageEffect, Payload, CCTags::SetByCaller::Projectile, Damage);
 
 	SpawnImpactEffects();
 	Destroy();
