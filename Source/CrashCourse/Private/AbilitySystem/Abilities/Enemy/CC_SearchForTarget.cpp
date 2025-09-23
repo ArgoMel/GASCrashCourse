@@ -61,7 +61,7 @@ void UCC_SearchForTarget::Search()
 {
 	const FVector SearchOrigin = GetAvatarActorFromActorInfo()->GetActorLocation();
 	if (!OwningEnemy.IsValid()) return;
-	FClosestActorWithTagResult ClosestActorResult = UCC_BlueprintLibrary::FindClosestActorWithTag(this, SearchOrigin, CrashTags::Player, OwningEnemy->SearchRange);
+	FClosestActorWithTagResult ClosestActorResult = UCC_BlueprintLibrary::FindClosestActorWithTag(GetAvatarActorFromActorInfo(), SearchOrigin, CrashTags::Player, OwningEnemy->SearchRange);
 
 	TargetBaseCharacter = Cast<ACC_BaseCharacter>(ClosestActorResult.Actor);
 
