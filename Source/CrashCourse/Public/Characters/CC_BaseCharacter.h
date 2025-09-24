@@ -47,6 +47,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Crash|AI")
 	float SearchRange{1000.f};
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crash|Damage")
+	float DamageNumberVerticalOffset{200.f};
 protected:
 	void GiveStartupAbilities();
 	void InitializeAttributes() const;

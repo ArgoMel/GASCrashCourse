@@ -29,6 +29,11 @@ void UCC_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 	    SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	}
 
+	if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+	}
+
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute() && GetHealth() <= 0.f)
 	{
 		FGameplayEventData Payload;
