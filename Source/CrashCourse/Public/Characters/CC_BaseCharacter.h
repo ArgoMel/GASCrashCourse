@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -27,14 +27,16 @@ class CRASHCOURSE_API ACC_BaseCharacter : public ACharacter, public IAbilitySyst
 
 public:
 	ACC_BaseCharacter();
-	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+public:
 	virtual UAttributeSet* GetAttributeSet() const { return nullptr; }
 	bool IsAlive() const { return bAlive; }
 	void SetAlive(bool bAliveStatus) { bAlive = bAliveStatus; }
-
-	UPROPERTY(BlueprintAssignable)
-	FASCInitialized OnASCInitialized;
 
 	UFUNCTION(BlueprintCallable, Category = "Crash|Death")
 	virtual void HandleRespawn();
@@ -44,26 +46,29 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RotateToTarget(AActor* RotateTarget);
-
-	UPROPERTY(EditAnywhere, Category = "Crash|AI")
-	float SearchRange{1000.f};
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crash|Damage")
-	float DamageNumberVerticalOffset{200.f};
+	
 protected:
 	void GiveStartupAbilities();
 	void InitializeAttributes() const;
 
 	void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData);
 	virtual void HandleDeath();
-private:
 
+public:
+	UPROPERTY(BlueprintAssignable)
+	FASCInitialized OnASCInitialized;
+
+	UPROPERTY(EditAnywhere, Category = "Crash|AI")
+	float SearchRange{1000.f};
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Crash|Damage")
+	float DamageNumberVerticalOffset{200.f};
+	
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Crash|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Crash|Effects")
 	TSubclassOf<UGameplayEffect> InitializeAttributesEffect;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Crash|Effects")
 	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
 

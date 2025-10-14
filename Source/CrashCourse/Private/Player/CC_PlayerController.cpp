@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "CrashCourse/Public/Player/CC_PlayerController.h"
 
@@ -16,15 +15,21 @@ void ACC_PlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	if (!IsValid(InputSubsystem)) return;
-
-	for (UInputMappingContext* Context : InputMappingContexts)
+	if (!IsValid(InputSubsystem))
+	{
+		return;
+	}
+	
+	for (const UInputMappingContext* Context : InputMappingContexts)
 	{
 		InputSubsystem->AddMappingContext(Context, 0);
 	}
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	if (!IsValid(EnhancedInputComponent)) return;
+	if (!IsValid(EnhancedInputComponent))
+	{
+		return;
+	}
 
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ThisClass::Jump);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ThisClass::StopJumping);
@@ -36,26 +41,38 @@ void ACC_PlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(TertiaryAction, ETriggerEvent::Started, this, &ThisClass::Tertiary);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void ACC_PlayerController::Jump()
 {
-	if (!IsValid(GetCharacter())) return;
-	if (!IsAlive()) return;
+	if (!IsValid(GetCharacter())
+		||!IsAlive())
+	{
+		return;
+	}
 
 	GetCharacter()->Jump();
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void ACC_PlayerController::StopJumping()
 {
-	if (!IsValid(GetCharacter())) return;
-	if (!IsAlive()) return;
+	if (!IsValid(GetCharacter())
+		||!IsAlive())
+	{
+		return;
+	}
 
 	GetCharacter()->StopJumping();
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void ACC_PlayerController::Move(const FInputActionValue& Value)
 {
-	if (!IsValid(GetPawn())) return;
-	if (!IsAlive()) return;
+	if (!IsValid(GetPawn())
+		||!IsAlive())
+	{
+		return;
+	}
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -70,23 +87,29 @@ void ACC_PlayerController::Move(const FInputActionValue& Value)
 
 void ACC_PlayerController::Look(const FInputActionValue& Value)
 {
-	if (!IsAlive()) return;
+	if (!IsAlive())
+	{
+		return;
+	}
 	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	AddYawInput(LookAxisVector.X);
 	AddPitchInput(LookAxisVector.Y);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void ACC_PlayerController::Primary()
 {
 	ActivateAbility(CCTags::CCAbilities::Primary);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void ACC_PlayerController::Secondary()
 {
 	ActivateAbility(CCTags::CCAbilities::Secondary);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void ACC_PlayerController::Tertiary()
 {
 	ActivateAbility(CCTags::CCAbilities::Tertiary);
@@ -103,7 +126,10 @@ void ACC_PlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
 
 bool ACC_PlayerController::IsAlive() const
 {
-	ACC_BaseCharacter* BaseCharacter = Cast<ACC_BaseCharacter>(GetPawn());
-	if (!IsValid(BaseCharacter)) return false;
+	const ACC_BaseCharacter* BaseCharacter = Cast<ACC_BaseCharacter>(GetPawn());
+	if (!IsValid(BaseCharacter))
+	{
+		return false;
+	}
 	return BaseCharacter->IsAlive();
 }

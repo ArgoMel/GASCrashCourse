@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -19,28 +19,6 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
-
-	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input")
-	TArray<TObjectPtr<UInputMappingContext>> InputMappingContexts;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Movement")
-	TObjectPtr<UInputAction> JumpAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Movement")
-	TObjectPtr<UInputAction> MoveAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Movement")
-	TObjectPtr<UInputAction> LookAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Abilities")
-	TObjectPtr<UInputAction> PrimaryAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Abilities")
-	TObjectPtr<UInputAction> SecondaryAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Abilities")
-	TObjectPtr<UInputAction> TertiaryAction;
-
 	void Jump();
 	void StopJumping();
 	void Move(const FInputActionValue& Value);
@@ -51,4 +29,22 @@ private:
 	void ActivateAbility(const FGameplayTag& AbilityTag) const;
 
 	bool IsAlive() const;
+	
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input")
+	TArray<TObjectPtr<UInputMappingContext>> InputMappingContexts;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Movement")
+	TObjectPtr<UInputAction> JumpAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Movement")
+	TObjectPtr<UInputAction> MoveAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Movement")
+	TObjectPtr<UInputAction> LookAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Abilities")
+	TObjectPtr<UInputAction> PrimaryAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Abilities")
+	TObjectPtr<UInputAction> SecondaryAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Crash|Input|Abilities")
+	TObjectPtr<UInputAction> TertiaryAction;
 };

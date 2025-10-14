@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "CrashCourse/Public/Characters/CC_PlayerCharacter.h"
 
@@ -11,17 +10,16 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/CC_PlayerState.h"
 
-
 ACC_PlayerCharacter::ACC_PlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
-
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-
+	Tags.Add(CrashTags::Player);
+	
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 500.f;
@@ -39,24 +37,6 @@ ACC_PlayerCharacter::ACC_PlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
-	Tags.Add(CrashTags::Player);
-}
-
-UAbilitySystemComponent* ACC_PlayerCharacter::GetAbilitySystemComponent() const
-{
-	ACC_PlayerState* CCPlayerState = Cast<ACC_PlayerState>(GetPlayerState());
-	if (!IsValid(CCPlayerState)) return nullptr;
-
-	return CCPlayerState->GetAbilitySystemComponent();
-}
-
-UAttributeSet* ACC_PlayerCharacter::GetAttributeSet() const
-{
-	ACC_PlayerState* CCPlayerState = Cast<ACC_PlayerState>(GetPlayerState());
-	if (!IsValid(CCPlayerState)) return nullptr;
-
-	return CCPlayerState->GetAttributeSet();
 }
 
 void ACC_PlayerCharacter::PossessedBy(AController* NewController)
@@ -70,7 +50,7 @@ void ACC_PlayerCharacter::PossessedBy(AController* NewController)
 	GiveStartupAbilities();
 	InitializeAttributes();
 
-	UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
+	const UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
 	if (!IsValid(CC_AttributeSet)) return;
 	
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
@@ -85,10 +65,26 @@ void ACC_PlayerCharacter::OnRep_PlayerState()
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 
-	UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
+	const UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
 	if (!IsValid(CC_AttributeSet)) return;
 	
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+}
+
+UAbilitySystemComponent* ACC_PlayerCharacter::GetAbilitySystemComponent() const
+{
+	const ACC_PlayerState* CCPlayerState = Cast<ACC_PlayerState>(GetPlayerState());
+	if (!IsValid(CCPlayerState)) return nullptr;
+
+	return CCPlayerState->GetAbilitySystemComponent();
+}
+
+UAttributeSet* ACC_PlayerCharacter::GetAttributeSet() const
+{
+	const ACC_PlayerState* CCPlayerState = Cast<ACC_PlayerState>(GetPlayerState());
+	if (!IsValid(CCPlayerState)) return nullptr;
+
+	return CCPlayerState->GetAttributeSet();
 }
 
 
