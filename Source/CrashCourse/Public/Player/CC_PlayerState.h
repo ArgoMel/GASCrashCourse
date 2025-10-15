@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -17,10 +17,14 @@ class CRASHCOURSE_API ACC_PlayerState : public APlayerState, public IAbilitySyst
 	GENERATED_BODY()
 public:
 	ACC_PlayerState();
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
-private:
 
+public:
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+public:
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	
+private:
 	UPROPERTY(VisibleAnywhere, Category = "Crash|Abilities")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 

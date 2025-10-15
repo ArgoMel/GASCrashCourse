@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "Player/CC_PlayerState.h"
 #include "AbilitySystem/CC_AbilitySystemComponent.h"

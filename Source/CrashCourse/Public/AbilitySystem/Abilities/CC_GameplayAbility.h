@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -6,9 +6,6 @@
 #include "Abilities/GameplayAbility.h"
 #include "CC_GameplayAbility.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class CRASHCOURSE_API UCC_GameplayAbility : public UGameplayAbility
 {
@@ -16,6 +13,7 @@ class CRASHCOURSE_API UCC_GameplayAbility : public UGameplayAbility
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Crash|Debug")
 	bool bDrawDebugs = false;
 };

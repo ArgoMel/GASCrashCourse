@@ -117,10 +117,15 @@ void ACC_PlayerController::Tertiary()
 
 void ACC_PlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
 {
-	if (!IsAlive()) return;
+	if (!IsAlive())
+	{
+		return;
+	}
 	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
-	if (!IsValid(ASC)) return;
-
+	if (!IsValid(ASC))
+	{
+		return;
+	}
 	ASC->TryActivateAbilitiesByTag(AbilityTag.GetSingleTagContainer());
 }
 

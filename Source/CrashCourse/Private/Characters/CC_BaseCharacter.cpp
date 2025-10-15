@@ -30,8 +30,10 @@ UAbilitySystemComponent* ACC_BaseCharacter::GetAbilitySystemComponent() const
 
 void ACC_BaseCharacter::GiveStartupAbilities()
 {
-	if (!IsValid(GetAbilitySystemComponent())) return;
-	
+	if (!IsValid(GetAbilitySystemComponent()))
+	{
+		return;
+	}
 	for (const auto& Ability : StartupAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability);
@@ -43,8 +45,8 @@ void ACC_BaseCharacter::InitializeAttributes() const
 {
 	checkf(IsValid(InitializeAttributesEffect), TEXT("InitializeAttributesEffect not set."));
 
-	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(InitializeAttributesEffect, 1.f, ContextHandle);
+	const FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	const FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(InitializeAttributesEffect, 1.f, ContextHandle);
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
 
@@ -66,13 +68,13 @@ void ACC_BaseCharacter::HandleRespawn()
 	bAlive = true;
 }
 
-void ACC_BaseCharacter::ResetAttributes()
+void ACC_BaseCharacter::ResetAttributes() const
 {
 	checkf(IsValid(ResetAttributesEffect), TEXT("ResetAttributesEffect not set."));
 	if (!IsValid(GetAbilitySystemComponent())) return;
 
-	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(ResetAttributesEffect, 1.f, ContextHandle);
+	const FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	const FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(ResetAttributesEffect, 1.f, ContextHandle);
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
 
