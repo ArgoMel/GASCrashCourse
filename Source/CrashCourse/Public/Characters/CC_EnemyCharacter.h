@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -16,38 +16,41 @@ class CRASHCOURSE_API ACC_EnemyCharacter : public ACC_BaseCharacter
 
 public:
 	ACC_EnemyCharacter();
+protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual void BeginPlay() override;
+
 	virtual UAttributeSet* GetAttributeSet() const override;
+	virtual void HandleDeath() override;
+	
+public:
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|AI")
-	float AcceptanceRadius{500.f};
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|AI")
-	float MinAttackDelay{.1f};
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|AI")
-	float MaxAttackDelay{.5f};
-
+public:
 	UFUNCTION(BlueprintImplementableEvent)
 	float GetTimelineLength();
+	
+	void StopMovementUntilLanded();
+	
+private:
+    UFUNCTION()
+    void EnableMovementOnLanded(const FHitResult& Hit);
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|AI")
+	float AcceptanceRadius{500.f};
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|AI")
+	float MinAttackDelay{.1f};
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|AI")
+	float MaxAttackDelay{.5f};
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
 	bool bIsBeingLaunched{false};
 
-	void StopMovementUntilLanded();
-protected:
-	virtual void BeginPlay() override;
-	virtual void HandleDeath() override;
 private:
-
-	UFUNCTION()
-	void EnableMovementOnLanded(const FHitResult& Hit);
-
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
-	
 };

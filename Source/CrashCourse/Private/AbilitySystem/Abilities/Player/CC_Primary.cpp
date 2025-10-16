@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "AbilitySystem/Abilities/Player/CC_Primary.h"
 
@@ -7,7 +6,7 @@
 #include "Engine/OverlapResult.h"
 #include "GameplayTags/CCTags.h"
 
-void UCC_Primary::SendHitReactEventToActors(const TArray<AActor*>& ActorsHit)
+void UCC_Primary::SendHitReactEventToActors(const TArray<AActor*>& ActorsHit) const
 {
 	for (AActor* HitActor : ActorsHit)
 	{

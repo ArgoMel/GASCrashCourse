@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "Characters/CC_EnemyCharacter.h"
 
@@ -9,7 +8,6 @@
 #include "AbilitySystem/CC_AttributeSet.h"
 #include "GameplayTags/CCTags.h"
 #include "Net/UnrealNetwork.h"
-
 
 ACC_EnemyCharacter::ACC_EnemyCharacter()
 {
@@ -29,14 +27,49 @@ void ACC_EnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(ThisClass, bIsBeingLaunched);
 }
 
-UAbilitySystemComponent* ACC_EnemyCharacter::GetAbilitySystemComponent() const
+void ACC_EnemyCharacter::BeginPlay()
 {
-	return AbilitySystemComponent;
+	Super::BeginPlay();
+
+	if (!IsValid(GetAbilitySystemComponent()))
+	{
+		return;
+	}
+	GetAbilitySystemComponent()->InitAbilityActorInfo(this, this);
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+	GiveStartupAbilities();
+	//InitializeAttributes();
+
+	const UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
+	if (!IsValid(CC_AttributeSet))
+	{
+		return;
+	}
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
 UAttributeSet* ACC_EnemyCharacter::GetAttributeSet() const
 {
 	return AttributeSet;
+}
+
+void ACC_EnemyCharacter::HandleDeath()
+{
+	Super::HandleDeath();
+
+	AAIController* AIController = GetController<AAIController>();
+	if (!IsValid(AIController)) return;
+	AIController->StopMovement();
+}
+
+UAbilitySystemComponent* ACC_EnemyCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 
 void ACC_EnemyCharacter::StopMovementUntilLanded()
@@ -56,34 +89,5 @@ void ACC_EnemyCharacter::EnableMovementOnLanded(const FHitResult& Hit)
 	bIsBeingLaunched = false;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, CCTags::Events::Enemy::EndAttack, FGameplayEventData());
 	LandedDelegate.RemoveAll(this);
-}
-
-void ACC_EnemyCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (!IsValid(GetAbilitySystemComponent())) return;
-
-	GetAbilitySystemComponent()->InitAbilityActorInfo(this, this);
-	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
-
-	if (!HasAuthority()) return;
-
-	GiveStartupAbilities();
-	InitializeAttributes();
-
-	UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
-	if (!IsValid(CC_AttributeSet)) return;
-	
-	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
-}
-
-void ACC_EnemyCharacter::HandleDeath()
-{
-	Super::HandleDeath();
-
-	AAIController* AIController = GetController<AAIController>();
-	if (!IsValid(AIController)) return;
-	AIController->StopMovement();
 }
 

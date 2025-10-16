@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "Utils/CC_BlueprintLibrary.h"
 
@@ -36,14 +35,7 @@ EHitDirection UCC_BlueprintLibrary::GetHitDirection(const FVector& TargetForward
 
 FName UCC_BlueprintLibrary::GetHitDirectionName(const EHitDirection& HitDirection)
 {
-	switch (HitDirection)
-	{
-		case EHitDirection::Left: return FName("Left");
-		case EHitDirection::Right: return FName("Right");
-		case EHitDirection::Forward: return FName("Forward");
-		case EHitDirection::Back: return FName("Back");
-		default: return FName("None");
-	}
+	return FName(UEnum::GetDisplayValueAsText(HitDirection).ToString());
 }
 
 FClosestActorWithTagResult UCC_BlueprintLibrary::FindClosestActorWithTag(UObject* WorldContextObject, const FVector& Origin, const FName& Tag, float SearchRange)
@@ -56,14 +48,23 @@ FClosestActorWithTagResult UCC_BlueprintLibrary::FindClosestActorWithTag(UObject
 
 	for (AActor* Actor : ActorsWithTag)
 	{
-		if (!IsValid(Actor)) continue;
-		ACC_BaseCharacter* BaseCharacter = Cast<ACC_BaseCharacter>(Actor);
-		if (!IsValid(BaseCharacter) || !BaseCharacter->IsAlive()) continue;
-
-		const float Distance = FVector::Dist(Origin, Actor->GetActorLocation());
-		if (ACC_BaseCharacter* SearchingCharacter = Cast<ACC_BaseCharacter>(WorldContextObject); IsValid(SearchingCharacter))
+		if (!IsValid(Actor))
 		{
-			if (Distance > SearchingCharacter->SearchRange) continue;
+			continue;
+		}
+		const ACC_BaseCharacter* BaseCharacter = Cast<ACC_BaseCharacter>(Actor);
+		if (!IsValid(BaseCharacter)
+			|| !BaseCharacter->IsAlive())
+		{
+			continue;
+		}
+		const float Distance = FVector::Dist(Origin, Actor->GetActorLocation());
+		if (const ACC_BaseCharacter* SearchingCharacter = Cast<ACC_BaseCharacter>(WorldContextObject); IsValid(SearchingCharacter))
+		{
+			if (Distance > SearchingCharacter->SearchRange)
+			{
+				continue;
+			}
 		}
 		if (Distance < ClosestDistance)
 		{
@@ -126,8 +127,10 @@ void UCC_BlueprintLibrary::SendDamageEventToPlayers(TArray<AActor*> Targets,
 
 TArray<AActor*> UCC_BlueprintLibrary::HitBoxOverlapTest(AActor* AvatarActor, float HitBoxRadius, float HitBoxForwardOffset, float HitBoxElevationOffset, bool bDrawDebugs)
 {
-	if (!IsValid(AvatarActor)) return TArray<AActor*>();
-
+	if (!IsValid(AvatarActor))
+	{
+		return TArray<AActor*>();
+	}
 	// Ensure that the overlap test ignores the Avatar Actor
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(AvatarActor);
@@ -143,7 +146,10 @@ TArray<AActor*> UCC_BlueprintLibrary::HitBoxOverlapTest(AActor* AvatarActor, flo
 	const FVector HitBoxLocation = AvatarActor->GetActorLocation() + Forward + FVector(0.f, 0.f, HitBoxElevationOffset);
 
 	UWorld* World = GEngine->GetWorldFromContextObject(AvatarActor, EGetWorldErrorMode::LogAndReturnNull);
-	if (!IsValid(World)) return TArray<AActor*>();
+	if (!IsValid(World))
+	{
+		return TArray<AActor*>();
+	}
 	World->OverlapMultiByChannel(OverlapResults, HitBoxLocation, FQuat::Identity, ECC_Visibility, Sphere, QueryParams, ResponseParams);
 
 	TArray<AActor*> ActorsHit;
@@ -163,24 +169,6 @@ TArray<AActor*> UCC_BlueprintLibrary::HitBoxOverlapTest(AActor* AvatarActor, flo
 	return ActorsHit;
 }
 
-void UCC_BlueprintLibrary::DrawHitBoxOverlapDebugs(const UObject* WorldContextObject, const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation, float HitBoxRadius)
-{
-	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
-	if (!IsValid(World)) return;
-	
-	DrawDebugSphere(World, HitBoxLocation, HitBoxRadius, 16, FColor::Red, false, 3.f);
-
-	for (const FOverlapResult& Result : OverlapResults)
-	{
-		if (IsValid(Result.GetActor()))
-		{
-			FVector DebugLocation = Result.GetActor()->GetActorLocation();
-			DebugLocation.Z += 100.f;
-			DrawDebugSphere(World, DebugLocation, 30.f, 10, FColor::Green, false, 3.f);
-		}
-	}
-}
-
 TArray<AActor*> UCC_BlueprintLibrary::ApplyKnockback(AActor* AvatarActor, const TArray<AActor*>& HitActors, float InnerRadius,
 	float OuterRadius, float LaunchForceMagnitude, float RotationAngle, bool bDrawDebugs)
 {
@@ -195,7 +183,7 @@ TArray<AActor*> UCC_BlueprintLibrary::ApplyKnockback(AActor* AvatarActor, const 
 		const FVector ToHitActor = HitCharacterLocation - AvatarLocation;
 		const float Distance = FVector::Dist(AvatarLocation, HitCharacterLocation);
 
-		float LaunchForce = 0.f;
+		float LaunchForce;
 		if (Distance > OuterRadius) continue;
 		if (Distance <= InnerRadius)
 		{
@@ -229,4 +217,24 @@ TArray<AActor*> UCC_BlueprintLibrary::ApplyKnockback(AActor* AvatarActor, const 
 		HitCharacter->LaunchCharacter(KnockbackForce, true, true);
 	}
 	return HitActors;
+}
+
+void UCC_BlueprintLibrary::DrawHitBoxOverlapDebugs(const UObject* WorldContextObject, const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation, float HitBoxRadius)
+{
+	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	if (!IsValid(World))
+	{
+		return;
+	}
+	DrawDebugSphere(World, HitBoxLocation, HitBoxRadius, 16, FColor::Red, false, 3.f);
+
+	for (const FOverlapResult& Result : OverlapResults)
+	{
+		if (IsValid(Result.GetActor()))
+		{
+			FVector DebugLocation = Result.GetActor()->GetActorLocation();
+			DebugLocation.Z += 100.f;
+			DrawDebugSphere(World, DebugLocation, 30.f, 10, FColor::Green, false, 3.f);
+		}
+	}
 }

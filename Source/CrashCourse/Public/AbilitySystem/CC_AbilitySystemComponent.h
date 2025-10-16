@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -6,16 +6,15 @@
 #include "AbilitySystemComponent.h"
 #include "CC_AbilitySystemComponent.generated.h"
 
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class CRASHCOURSE_API UCC_AbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-
-public:
+protected:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	virtual void OnRep_ActivateAbilities() override;
-
+	
+public:
 	UFUNCTION(BlueprintCallable, Category = "Crash|Abilities")
 	void SetAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level);
 
@@ -23,6 +22,5 @@ public:
 	void AddToAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level = 1);
 
 private:
-
 	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);
 };

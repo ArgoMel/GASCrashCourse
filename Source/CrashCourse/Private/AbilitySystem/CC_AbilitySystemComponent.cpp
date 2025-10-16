@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "AbilitySystem/CC_AbilitySystemComponent.h"
 
@@ -25,7 +24,8 @@ void UCC_AbilitySystemComponent::OnRep_ActivateAbilities()
 
 void UCC_AbilitySystemComponent::SetAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level)
 {
-	if (IsValid(GetAvatarActor()) && !GetAvatarActor()->HasAuthority()) return;
+	if (IsValid(GetAvatarActor())
+		&& !GetAvatarActor()->HasAuthority()) return;
 
 	if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass))
 	{
@@ -47,8 +47,10 @@ void UCC_AbilitySystemComponent::AddToAbilityLevel(TSubclassOf<UGameplayAbility>
 
 void UCC_AbilitySystemComponent::HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec)
 {
-	if (!IsValid(AbilitySpec.Ability)) return;
-	
+	if (!IsValid(AbilitySpec.Ability))
+	{
+		return;
+	}
 	for (const FGameplayTag& Tag : AbilitySpec.Ability->GetAssetTags())
 	{
 		if (Tag.MatchesTagExact(CCTags::CCAbilities::ActivateOnGiven))

@@ -1,4 +1,5 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
+
 
 #pragma once
 
@@ -6,18 +7,15 @@
 #include "AbilitySystem/Abilities/CC_GameplayAbility.h"
 #include "CC_HitReact.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class CRASHCOURSE_API UCC_HitReact : public UCC_GameplayAbility
 {
 	GENERATED_BODY()
 public:
-
 	UFUNCTION(BlueprintCallable, Category = "Crash|Abilities")
 	void CacheHitDirectionVectors(AActor* Instigator);
 
+public:
 	UPROPERTY(BlueprintReadOnly, Category = "Crash|Abilities")
 	FVector AvatarForward;
 
