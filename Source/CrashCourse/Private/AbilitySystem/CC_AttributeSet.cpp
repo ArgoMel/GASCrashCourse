@@ -26,20 +26,18 @@ void UCC_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 	    SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+		if (GetHealth() <= 0.f )
+		{
+			FGameplayEventData Payload;
+			Payload.Instigator = Data.Target.GetAvatarActor();
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Data.EffectSpec.GetEffectContext().GetInstigator(), CCTags::Events::KillScored, Payload);
+		}
 	}
-
-	if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	else if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
 	}
-
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute() && GetHealth() <= 0.f)
-	{
-		FGameplayEventData Payload;
-		Payload.Instigator = Data.Target.GetAvatarActor();
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Data.EffectSpec.GetEffectContext().GetInstigator(), CCTags::Events::KillScored, Payload);
-	}
-
+	
 	if (!bAttributesInitialized)
 	{
 		bAttributesInitialized = true;

@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "Tasks/CC_AttributeChangeTask.h"
 #include "AbilitySystemComponent.h"
@@ -32,6 +31,7 @@ void UCC_AttributeChangeTask::EndTask()
 	MarkAsGarbage();
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void UCC_AttributeChangeTask::AttributeChanged(const FOnAttributeChangeData& Data)
 {
 	OnAttributeChanged.Broadcast(Data.Attribute, Data.NewValue, Data.OldValue);

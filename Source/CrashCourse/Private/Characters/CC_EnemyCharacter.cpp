@@ -63,7 +63,10 @@ void ACC_EnemyCharacter::HandleDeath()
 	Super::HandleDeath();
 
 	AAIController* AIController = GetController<AAIController>();
-	if (!IsValid(AIController)) return;
+	if (!IsValid(AIController))
+	{
+		return;
+	}
 	AIController->StopMovement();
 }
 

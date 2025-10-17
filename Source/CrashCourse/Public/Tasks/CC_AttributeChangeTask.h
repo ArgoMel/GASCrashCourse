@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -17,18 +17,18 @@ class CRASHCOURSE_API UCC_AttributeChangeTask : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 public:
-
-	UPROPERTY(BlueprintAssignable)
-	FOnAttributeChanged OnAttributeChanged;
-
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"))
 	static UCC_AttributeChangeTask* ListenForAttributeChange(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAttribute Attribute);
-
+	
 	UFUNCTION(BlueprintCallable)
 	void EndTask();
 
+	void AttributeChanged(const FOnAttributeChangeData& Data);
+	
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChanged OnAttributeChanged;
+	
 	TWeakObjectPtr<UAbilitySystemComponent> ASC;
 	FGameplayAttribute AttributeToListenFor;
-
-	void AttributeChanged(const FOnAttributeChangeData& Data);
 };
