@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -6,7 +6,6 @@
 #include "AttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "CC_WidgetComponent.generated.h"
-
 
 class UAbilitySystemComponent;
 class UCC_AttributeSet;
@@ -17,21 +16,10 @@ UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class CRASHCOURSE_API UCC_WidgetComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
-
-public:
-	
-
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere)
-	TMap<FGameplayAttribute, FGameplayAttribute> AttributeMap;
-
 private:
-	TWeakObjectPtr<ACC_BaseCharacter> CrashCharacter;
-	TWeakObjectPtr<UCC_AbilitySystemComponent> AbilitySystemComponent;
-	TWeakObjectPtr<UCC_AttributeSet> AttributeSet;
-
 	void InitAbilitySystemData();
 	bool IsASCInitialized() const;
 	void InitializeAttributeDelegate();
@@ -42,4 +30,13 @@ private:
 
 	UFUNCTION()
 	void BindToAttributeChanges();
+
+protected:
+	UPROPERTY(EditAnywhere)
+	TMap<FGameplayAttribute, FGameplayAttribute> AttributeMap;
+
+private:
+	TWeakObjectPtr<ACC_BaseCharacter> CrashCharacter;
+	TWeakObjectPtr<UCC_AbilitySystemComponent> AbilitySystemComponent;
+	TWeakObjectPtr<UCC_AttributeSet> AttributeSet;
 };

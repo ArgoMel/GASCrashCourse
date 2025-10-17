@@ -52,11 +52,13 @@ void ACC_PlayerCharacter::PossessedBy(AController* NewController)
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 	GiveStartupAbilities();
-	//InitializeAttributes();
+	InitializeAttributes();
 
 	const UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
-	if (!IsValid(CC_AttributeSet)) return;
-	
+	if (!IsValid(CC_AttributeSet))
+	{
+		return;
+	}
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
@@ -72,8 +74,10 @@ void ACC_PlayerCharacter::OnRep_PlayerState()
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 
 	const UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
-	if (!IsValid(CC_AttributeSet)) return;
-	
+	if (!IsValid(CC_AttributeSet))
+	{
+		return;
+	}
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
@@ -90,8 +94,10 @@ UAbilitySystemComponent* ACC_PlayerCharacter::GetAbilitySystemComponent() const
 UAttributeSet* ACC_PlayerCharacter::GetAttributeSet() const
 {
 	const ACC_PlayerState* CCPlayerState = Cast<ACC_PlayerState>(GetPlayerState());
-	if (!IsValid(CCPlayerState)) return nullptr;
-
+	if (!IsValid(CCPlayerState))
+	{
+		return nullptr;
+	}
 	return CCPlayerState->GetAttributeSet();
 }
 

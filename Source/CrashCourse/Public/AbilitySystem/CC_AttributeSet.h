@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -20,45 +20,40 @@ UCLASS()
 class CRASHCOURSE_API UCC_AttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
-public:
+protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
-
+	
+public:
 	UPROPERTY(BlueprintAssignable)
 	FAttributesInitialized OnAttributesInitialized;
 
 	UPROPERTY(ReplicatedUsing = OnRep_AttributesInitialized)
 	bool bAttributesInitialized = false;
-
 	UFUNCTION()
-	void OnRep_AttributesInitialized();
+	void OnRep_AttributesInitialized() const;
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
-
+	UFUNCTION()
+	void OnRep_Health(const FGameplayAttributeData& OldValue) const;
+	ATTRIBUTE_ACCESSORS(ThisClass, Health);
+	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth)
 	FGameplayAttributeData MaxHealth;
-
+	UFUNCTION()
+	void OnRep_MaxHealth(const FGameplayAttributeData& OldValue) const;
+	ATTRIBUTE_ACCESSORS(ThisClass, MaxHealth);
+	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana)
 	FGameplayAttributeData Mana;
-
+	UFUNCTION()
+	void OnRep_Mana(const FGameplayAttributeData& OldValue) const;
+	ATTRIBUTE_ACCESSORS(ThisClass, Mana);
+	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana)
 	FGameplayAttributeData MaxMana;
-
 	UFUNCTION()
-	void OnRep_Health(const FGameplayAttributeData& OldValue);
-	
-	UFUNCTION()
-	void OnRep_MaxHealth(const FGameplayAttributeData& OldValue);
-
-	UFUNCTION()
-	void OnRep_Mana(const FGameplayAttributeData& OldValue);
-
-	UFUNCTION()
-	void OnRep_MaxMana(const FGameplayAttributeData& OldValue);
-
-	ATTRIBUTE_ACCESSORS(ThisClass, Health);
-	ATTRIBUTE_ACCESSORS(ThisClass, MaxHealth);
-	ATTRIBUTE_ACCESSORS(ThisClass, Mana);
+	void OnRep_MaxMana(const FGameplayAttributeData& OldValue) const;
 	ATTRIBUTE_ACCESSORS(ThisClass, MaxMana);
 };

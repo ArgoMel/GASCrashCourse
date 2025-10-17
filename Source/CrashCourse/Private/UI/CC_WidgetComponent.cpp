@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "UI/CC_WidgetComponent.h"
 
@@ -8,7 +7,6 @@
 #include "Blueprint/WidgetTree.h"
 #include "Characters/CC_BaseCharacter.h"
 #include "UI/CC_AttributeWidget.h"
-
 
 void UCC_WidgetComponent::BeginPlay()
 {
@@ -54,7 +52,10 @@ void UCC_WidgetComponent::OnASCInitialized(UAbilitySystemComponent* ASC, UAttrib
 	AbilitySystemComponent = Cast<UCC_AbilitySystemComponent>(ASC);
 	AttributeSet = Cast<UCC_AttributeSet>(AS);
 
-	if (!IsASCInitialized()) return;
+	if (!IsASCInitialized())
+	{
+		return;
+	}
 	InitializeAttributeDelegate();
 }
 
@@ -62,7 +63,8 @@ void UCC_WidgetComponent::BindToAttributeChanges()
 {
 	for (const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair : AttributeMap)
 	{
-		BindWidgetToAttributeChanges(GetUserWidgetObject(), Pair); // for checking the owned widget object.
+		// for checking the owned widget object.
+		BindWidgetToAttributeChanges(GetUserWidgetObject(), Pair); 
 		
 		GetUserWidgetObject()->WidgetTree->ForEachWidget([this, &Pair](UWidget* ChildWidget)
 		{
@@ -74,14 +76,21 @@ void UCC_WidgetComponent::BindToAttributeChanges()
 void UCC_WidgetComponent::BindWidgetToAttributeChanges(UWidget* WidgetObject, const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair) const
 {
 	UCC_AttributeWidget* AttributeWidget = Cast<UCC_AttributeWidget>(WidgetObject);
-	if (!IsValid(AttributeWidget)) return; // We only care about CC Attribute Widgets
-	if (!AttributeWidget->MatchesAttributes(Pair)) return; // Only subscribe for matching Attributes
+	// We only care about CC Attribute Widgets
+	// Only subscribe for matching Attributes
+	if (!IsValid(AttributeWidget)	
+		||!AttributeWidget->MatchesAttributes(Pair))	
+	{
+		return; 
+	}
 	AttributeWidget->AvatarActor = CrashCharacter;
 
-	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), 0.f); // for initial values.
+	// for initial values.
+	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), 0.f); 
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Key).AddLambda([this, AttributeWidget, &Pair](const FOnAttributeChangeData& AttributeChangeData)
 	{
-		AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), AttributeChangeData.OldValue); // For changes during the game.
+		// For changes during the game.
+		AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), AttributeChangeData.OldValue); 
 	});
 }

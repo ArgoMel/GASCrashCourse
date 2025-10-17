@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "AbilitySystem/CC_AttributeSet.h"
 
@@ -48,7 +47,7 @@ void UCC_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 	}
 }
 
-void UCC_AttributeSet::OnRep_AttributesInitialized()
+void UCC_AttributeSet::OnRep_AttributesInitialized() const
 {
 	if (bAttributesInitialized)
 	{
@@ -56,22 +55,22 @@ void UCC_AttributeSet::OnRep_AttributesInitialized()
 	}
 }
 
-void UCC_AttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue)
+void UCC_AttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, Health, OldValue);
 }
 
-void UCC_AttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)
+void UCC_AttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxHealth, OldValue);
 }
 
-void UCC_AttributeSet::OnRep_Mana(const FGameplayAttributeData& OldValue)
+void UCC_AttributeSet::OnRep_Mana(const FGameplayAttributeData& OldValue) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, Mana, OldValue);
 }
 
-void UCC_AttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldValue)
+void UCC_AttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldValue) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxMana, OldValue);
 }

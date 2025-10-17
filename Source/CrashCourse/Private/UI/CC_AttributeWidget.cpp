@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "UI/CC_AttributeWidget.h"
 

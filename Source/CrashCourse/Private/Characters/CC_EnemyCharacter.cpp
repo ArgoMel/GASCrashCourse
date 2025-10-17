@@ -43,7 +43,7 @@ void ACC_EnemyCharacter::BeginPlay()
 		return;
 	}
 	GiveStartupAbilities();
-	//InitializeAttributes();
+	InitializeAttributes();
 
 	const UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
 	if (!IsValid(CC_AttributeSet))
