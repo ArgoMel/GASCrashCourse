@@ -79,7 +79,10 @@ void ACC_EnemyCharacter::StopMovementUntilLanded()
 {
 	bIsBeingLaunched = true;
 	AAIController* AIController = GetController<AAIController>();
-	if (!IsValid(AIController)) return;
+	if (!IsValid(AIController))
+	{
+		return;
+	}
 	AIController->StopMovement();
 	if (!LandedDelegate.IsAlreadyBound(this, &ThisClass::EnableMovementOnLanded))
 	{

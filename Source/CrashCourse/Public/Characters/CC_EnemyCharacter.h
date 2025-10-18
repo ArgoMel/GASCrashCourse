@@ -27,7 +27,7 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 public:
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintPure,BlueprintImplementableEvent)
 	float GetTimelineLength();
 	
 	void StopMovementUntilLanded();

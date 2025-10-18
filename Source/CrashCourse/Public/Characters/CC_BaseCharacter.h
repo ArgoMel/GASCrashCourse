@@ -44,7 +44,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Crash|Attributes")
 	void ResetAttributes() const;
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent)
 	void RotateToTarget(AActor* RotateTarget);
 	
 protected:

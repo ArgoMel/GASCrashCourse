@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "AbilitySystem/Abilities/Enemy/CC_SearchForTarget.h"
 
@@ -15,13 +14,14 @@
 
 UCC_SearchForTarget::UCC_SearchForTarget()
 {
+	const FGameplayTag assetTag = CCTags::CCAbilities::ActivateOnGiven;
+	SetAssetTags(assetTag.GetSingleTagContainer());
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
 }
 
 void UCC_SearchForTarget::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-	const FGameplayEventData* TriggerEventData)
+	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
@@ -39,9 +39,14 @@ void UCC_SearchForTarget::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 void UCC_SearchForTarget::StartSearch()
 {
-	if (bDrawDebugs) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("UCC_SearchForTarget::StartSearch")));
-	if (!OwningEnemy.IsValid()) return;
-	
+	if (bDrawDebugs)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("UCC_SearchForTarget::StartSearch")));
+	}
+	if (!OwningEnemy.IsValid())
+	{
+		return;
+	}
 	const float SearchDelay = FMath::RandRange(OwningEnemy->MinAttackDelay, OwningEnemy->MaxAttackDelay);
 	SearchDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, SearchDelay);
 	SearchDelayTask->OnFinish.AddDynamic(this, &ThisClass::Search);
@@ -50,39 +55,41 @@ void UCC_SearchForTarget::StartSearch()
 
 void UCC_SearchForTarget::EndAttackEventReceived(FGameplayEventData Payload)
 {
-	if (OwningEnemy.IsValid() && !OwningEnemy->bIsBeingLaunched)
+	if (OwningEnemy.IsValid()
+		&& !OwningEnemy->bIsBeingLaunched)
 	{
 		StartSearch();
 	}
 }
-	
 
 void UCC_SearchForTarget::Search()
 {
 	const FVector SearchOrigin = GetAvatarActorFromActorInfo()->GetActorLocation();
-	if (!OwningEnemy.IsValid()) return;
-	FClosestActorWithTagResult ClosestActorResult = UCC_BlueprintLibrary::FindClosestActorWithTag(GetAvatarActorFromActorInfo(), SearchOrigin, CrashTags::Player, OwningEnemy->SearchRange);
+	if (!OwningEnemy.IsValid())
+	{
+		return;
+	}
+	const FClosestActorWithTagResult ClosestActorResult = UCC_BlueprintLibrary::FindClosestActorWithTag(GetAvatarActorFromActorInfo(), SearchOrigin, CrashTags::Player, OwningEnemy->SearchRange);
 
 	TargetBaseCharacter = Cast<ACC_BaseCharacter>(ClosestActorResult.Actor);
 
-	if (!TargetBaseCharacter.IsValid())
+	if (!TargetBaseCharacter.IsValid()
+		||!TargetBaseCharacter->IsAlive())
 	{
 		StartSearch();
 		return;
 	}
-	if (TargetBaseCharacter->IsAlive())
-	{
-		MoveToTargetAndAttack();
-	}
-	else
-	{
-		StartSearch();
-	}
+	MoveToTargetAndAttack();
 }
 
 void UCC_SearchForTarget::MoveToTargetAndAttack()
 {
-	if (!OwningEnemy.IsValid() || !OwningAIController.IsValid() || !TargetBaseCharacter.IsValid()) return;
+	if (!OwningEnemy.IsValid()
+		|| !OwningAIController.IsValid()
+		|| !TargetBaseCharacter.IsValid())
+	{
+		return;
+	}
 	if (!OwningEnemy->IsAlive())
 	{
 		StartSearch();
@@ -97,7 +104,6 @@ void UCC_SearchForTarget::MoveToTargetAndAttack()
 
 	MoveToLocationOrActorTask->OnMoveTaskFinished.AddUObject(this, &ThisClass::AttackTarget);
 	MoveToLocationOrActorTask->ConditionalPerformMove();
-	
 }
 
 void UCC_SearchForTarget::AttackTarget(TEnumAsByte<EPathFollowingResult::Type> Result, AAIController* AIController)
@@ -114,6 +120,7 @@ void UCC_SearchForTarget::AttackTarget(TEnumAsByte<EPathFollowingResult::Type> R
 	AttackDelayTask->Activate();
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void UCC_SearchForTarget::Attack()
 {
 	const FGameplayTag AttackTag = CCTags::CCAbilities::Enemy::Attack;

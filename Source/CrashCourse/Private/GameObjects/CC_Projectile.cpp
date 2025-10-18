@@ -1,5 +1,4 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "GameObjects/CC_Projectile.h"
 
@@ -13,10 +12,9 @@
 ACC_Projectile::ACC_Projectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
-
 	bReplicates = true;
+	
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
 }
 
 void ACC_Projectile::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -24,10 +22,17 @@ void ACC_Projectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	ACC_PlayerCharacter* PlayerCharacter = Cast<ACC_PlayerCharacter>(OtherActor);
-	if (!IsValid(PlayerCharacter)) return;
-	if (!PlayerCharacter->IsAlive()) return;
-	UAbilitySystemComponent* AbilitySystemComponent = PlayerCharacter->GetAbilitySystemComponent();
-	if (!IsValid(AbilitySystemComponent) || !HasAuthority()) return;
+	if (!IsValid(PlayerCharacter)
+		||!PlayerCharacter->IsAlive())
+	{
+		return;
+	}
+	const UAbilitySystemComponent* AbilitySystemComponent = PlayerCharacter->GetAbilitySystemComponent();
+	if (!IsValid(AbilitySystemComponent)
+		|| !HasAuthority())
+	{
+		return;
+	}
 
 	FGameplayEventData Payload;
 	Payload.Instigator = GetOwner();

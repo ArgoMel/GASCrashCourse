@@ -38,10 +38,10 @@ FName UCC_BlueprintLibrary::GetHitDirectionName(const EHitDirection& HitDirectio
 	return FName(UEnum::GetDisplayValueAsText(HitDirection).ToString());
 }
 
-FClosestActorWithTagResult UCC_BlueprintLibrary::FindClosestActorWithTag(UObject* WorldContextObject, const FVector& Origin, const FName& Tag, float SearchRange)
+FClosestActorWithTagResult UCC_BlueprintLibrary::FindClosestActorWithTag(AActor* SourceActor, const FVector& Origin, const FName& Tag, float SearchRange)
 {
 	TArray<AActor*> ActorsWithTag;
-	UGameplayStatics::GetAllActorsWithTag(WorldContextObject, Tag, ActorsWithTag);
+	UGameplayStatics::GetAllActorsWithTag(SourceActor, Tag, ActorsWithTag);
 
 	float ClosestDistance = TNumericLimits<float>::Max();
 	AActor* ClosestActor = nullptr;
@@ -59,7 +59,8 @@ FClosestActorWithTagResult UCC_BlueprintLibrary::FindClosestActorWithTag(UObject
 			continue;
 		}
 		const float Distance = FVector::Dist(Origin, Actor->GetActorLocation());
-		if (const ACC_BaseCharacter* SearchingCharacter = Cast<ACC_BaseCharacter>(WorldContextObject); IsValid(SearchingCharacter))
+		const ACC_BaseCharacter* SearchingCharacter = Cast<ACC_BaseCharacter>(SourceActor);
+		if (IsValid(SearchingCharacter))
 		{
 			if (Distance > SearchingCharacter->SearchRange)
 			{
@@ -80,12 +81,14 @@ FClosestActorWithTagResult UCC_BlueprintLibrary::FindClosestActorWithTag(UObject
 	return Result;
 }
 
-void UCC_BlueprintLibrary::SendDamageEventToPlayer(AActor* Target, const TSubclassOf<UGameplayEffect>& DamageEffect,
-	FGameplayEventData& Payload, const FGameplayTag& DataTag, float Damage, const FGameplayTag& EventTagOverride, UObject* OptionalParticleSystem)
+void UCC_BlueprintLibrary::SendDamageEventToPlayer(AActor* Target, const TSubclassOf<UGameplayEffect>& DamageEffect, FGameplayEventData& Payload, const FGameplayTag& DataTag, float Damage, const FGameplayTag& EventTagOverride, UObject* OptionalParticleSystem)
 {
 	ACC_BaseCharacter* PlayerCharacter = Cast<ACC_BaseCharacter>(Target);
-	if (!IsValid(PlayerCharacter)) return;
-	if (!PlayerCharacter->IsAlive()) return;
+	if (!IsValid(PlayerCharacter)
+		||!PlayerCharacter->IsAlive())
+	{
+		return;
+	}
 
 	FGameplayTag EventTag;
 	if (!EventTagOverride.MatchesTagExact(CCTags::None))
@@ -94,9 +97,11 @@ void UCC_BlueprintLibrary::SendDamageEventToPlayer(AActor* Target, const TSubcla
 	}
 	else
 	{
-		UCC_AttributeSet* AttributeSet = Cast<UCC_AttributeSet>(PlayerCharacter->GetAttributeSet());
-		if (!IsValid(AttributeSet)) return;
-
+		const UCC_AttributeSet* AttributeSet = Cast<UCC_AttributeSet>(PlayerCharacter->GetAttributeSet());
+		if (!IsValid(AttributeSet))
+		{
+			return;
+		}
 		const bool bLethal = AttributeSet->GetHealth() - Damage <= 0.f;
 		EventTag = bLethal ? CCTags::Events::Player::Death : CCTags::Events::Player::HitReact;
 	}
@@ -105,10 +110,12 @@ void UCC_BlueprintLibrary::SendDamageEventToPlayer(AActor* Target, const TSubcla
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(PlayerCharacter, EventTag, Payload);
 
 	UAbilitySystemComponent* TargetASC = PlayerCharacter->GetAbilitySystemComponent();
-	if (!IsValid(TargetASC)) return;
-
-	FGameplayEffectContextHandle ContextHandle = TargetASC->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+	if (!IsValid(TargetASC))
+	{
+		return;
+	}
+	const FGameplayEffectContextHandle ContextHandle = TargetASC->MakeEffectContext();
+	const FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DataTag, -Damage);
 
@@ -116,8 +123,7 @@ void UCC_BlueprintLibrary::SendDamageEventToPlayer(AActor* Target, const TSubcla
 }
 
 void UCC_BlueprintLibrary::SendDamageEventToPlayers(TArray<AActor*> Targets,
-	const TSubclassOf<UGameplayEffect>& DamageEffect, FGameplayEventData& Payload, const FGameplayTag& DataTag,
-	float Damage, const FGameplayTag& EventTagOverride, UObject* OptionalParticleSystem)
+	const TSubclassOf<UGameplayEffect>& DamageEffect, FGameplayEventData& Payload, const FGameplayTag& DataTag, float Damage, const FGameplayTag& EventTagOverride, UObject* OptionalParticleSystem)
 {
 	for (AActor* Target : Targets)
 	{

@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "Notifies/CC_MeleeAttack.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
@@ -10,15 +9,27 @@
 #include "GameplayTags/CCTags.h"
 #include "Kismet/KismetMathLibrary.h"
 
-void UCC_MeleeAttack::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime,
-                                 const FAnimNotifyEventReference& EventReference)
+UCC_MeleeAttack::UCC_MeleeAttack()
+{
+	bDrawDebugs=false;
+}
+
+FString UCC_MeleeAttack::GetNotifyName_Implementation() const
+{
+	return TEXT("AN_MeleeAttack");
+}
+
+void UCC_MeleeAttack::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
 
-	if (!IsValid(MeshComp)) return;
-	if (!IsValid(MeshComp->GetOwner())) return;
+	if (!IsValid(MeshComp)
+		||!IsValid(MeshComp->GetOwner()))
+	{
+		return;
+	}
 
-	TArray<FHitResult> Hits = PerformSphereTrace(MeshComp);
+	const TArray<FHitResult> Hits = PerformSphereTrace(MeshComp);
 	SendEventsToActors(MeshComp, Hits);
 }
 
@@ -36,8 +47,10 @@ TArray<FHitResult> UCC_MeleeAttack::PerformSphereTrace(USkeletalMeshComponent* M
 	ResponseParams.CollisionResponse.SetAllChannels(ECR_Ignore);
 	ResponseParams.CollisionResponse.SetResponse(ECC_Pawn, ECR_Block);
 	UWorld* World = GEngine->GetWorldFromContextObject(MeshComp, EGetWorldErrorMode::LogAndReturnNull);
-	if (!IsValid(World)) return OutHits;
-	
+	if (!IsValid(World))
+	{
+		return OutHits;
+	}
 	bool const bHit = World->SweepMultiByChannel(
 		OutHits,
 		Start,
@@ -62,7 +75,6 @@ TArray<FHitResult> UCC_MeleeAttack::PerformSphereTrace(USkeletalMeshComponent* M
 			FColor::Green,
 			5.f);
 	}
-
 	return OutHits;
 }
 
@@ -71,11 +83,16 @@ void UCC_MeleeAttack::SendEventsToActors(USkeletalMeshComponent* MeshComp, const
 	for (const FHitResult& Hit : Hits)
 	{
 		ACC_PlayerCharacter* PlayerCharacter = Cast<ACC_PlayerCharacter>(Hit.GetActor());
-		if (!IsValid(PlayerCharacter)) continue;
-		if (!PlayerCharacter->IsAlive()) continue;
-		UAbilitySystemComponent* ASC = PlayerCharacter->GetAbilitySystemComponent();
-		if (!IsValid(ASC)) continue;
-
+		if (!IsValid(PlayerCharacter)
+			||!PlayerCharacter->IsAlive())
+		{
+			continue;
+		}
+		const UAbilitySystemComponent* ASC = PlayerCharacter->GetAbilitySystemComponent();
+		if (!IsValid(ASC))
+		{
+			continue;
+		}
 		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 		ContextHandle.AddHitResult(Hit);
 

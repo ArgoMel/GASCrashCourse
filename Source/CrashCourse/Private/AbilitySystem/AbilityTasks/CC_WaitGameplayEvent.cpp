@@ -1,10 +1,8 @@
-// Copyright Druid Mechanics
-
+// Copyright ArgoMel
 
 #include "AbilitySystem/AbilityTasks/CC_WaitGameplayEvent.h"
 
-UCC_WaitGameplayEvent* UCC_WaitGameplayEvent::WaitGameplayEventToActorProxy(AActor* TargetActor, FGameplayTag EventTag,
-	bool OnlyTriggerOnce, bool OnlyMatchExact)
+UCC_WaitGameplayEvent* UCC_WaitGameplayEvent::WaitGameplayEventToActorProxy(AActor* TargetActor, FGameplayTag EventTag, bool OnlyTriggerOnce, bool OnlyMatchExact)
 {
 	UCC_WaitGameplayEvent* MyObj = NewObject<UCC_WaitGameplayEvent>();
 	MyObj->SetAbilityActor(TargetActor);

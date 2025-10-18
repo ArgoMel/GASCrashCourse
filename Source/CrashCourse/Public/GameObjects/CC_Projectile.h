@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+// Copyright ArgoMel
 
 #pragma once
 
@@ -13,19 +13,20 @@ UCLASS()
 class CRASHCOURSE_API ACC_Projectile : public AActor
 {
 	GENERATED_BODY()
-
 public:
 	ACC_Projectile();
+protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|Damage", meta = (ExposeOnSpawn, ClampMin = "0.0"))
-	float Damage{-25.f};
-
+public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Crash|Projectile")
 	void SpawnImpactEffects();
 	
-private:
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crash|Damage", meta = (ExposeOnSpawn, ClampMin = "0.0"))
+	float Damage{25.f};
 
+private:
 	UPROPERTY(VisibleAnywhere, Category = "Crash|Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
