@@ -175,8 +175,7 @@ TArray<AActor*> UCC_BlueprintLibrary::HitBoxOverlapTest(AActor* AvatarActor, flo
 	return ActorsHit;
 }
 
-TArray<AActor*> UCC_BlueprintLibrary::ApplyKnockback(AActor* AvatarActor, const TArray<AActor*>& HitActors, float InnerRadius,
-	float OuterRadius, float LaunchForceMagnitude, float RotationAngle, bool bDrawDebugs)
+TArray<AActor*> UCC_BlueprintLibrary::ApplyKnockback(AActor* AvatarActor, const TArray<AActor*>& HitActors, float InnerRadius, float OuterRadius, float LaunchForceMagnitude, float RotationAngle, bool bDrawDebugs)
 {
 	for (AActor* HitActor : HitActors)
 	{
