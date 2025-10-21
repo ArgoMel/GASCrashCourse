@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTags/CCTags.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "CC_BlueprintLibrary.generated.h"
 

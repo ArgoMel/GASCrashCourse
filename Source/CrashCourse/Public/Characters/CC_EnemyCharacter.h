@@ -46,6 +46,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
 	bool bIsBeingLaunched{false};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bShouldRespawn{false};
 
 private:
 	UPROPERTY(VisibleAnywhere)
